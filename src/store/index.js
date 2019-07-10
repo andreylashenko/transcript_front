@@ -40,6 +40,12 @@ export default new Vuex.Store({
     setRecordsCount(state, payload) {
       state.recordsCount = payload;
     },
+    setTodayRecordsCount(state, payload) {
+      state.todayRecordsCount = payload;
+    },
+    setTotalDuration(state, payload) {
+      state.totalDuration = payload;
+    }
   },
   actions: {
     recordList(context, payload) {
@@ -61,6 +67,26 @@ export default new Vuex.Store({
           .then(recordsCount => {
             context.commit('setRecordsCount', recordsCount)
             return recordsCount
+          })
+    },
+    todayRecordsCount(context, payload) {
+      Vue.http.get('http://localhost:8081/metric/todayRecordsCount')
+          .then(response => {
+            return response.json()
+          })
+          .then(todayRecordsCount => {
+            context.commit('setTodayRecordsCount', todayRecordsCount)
+            return todayRecordsCount
+          })
+    },
+    totalDuration(context, payload) {
+      Vue.http.get('http://localhost:8081/metric/totalDuration')
+          .then(response => {
+            return response.json()
+          })
+          .then(totalDuration => {
+            context.commit('setTotalDuration', totalDuration)
+            return totalDuration
           })
     },
     savePhone(context, payload) {
@@ -131,6 +157,12 @@ export default new Vuex.Store({
     },
     getRecordsCount(state) {
       return state.recordsCount;
+    },
+    getTodayRecordsCount(state) {
+      return state.todayRecordsCount;
+    },
+    getTotalDuration(state) {
+      return state.totalDuration;
     }
   }
 })

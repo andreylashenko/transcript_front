@@ -127,7 +127,7 @@
                 <div class="card-body-icon">
                   <i class="fas fa-fw fa-life-ring"></i>
                 </div>
-                <div class="mr-5">Общая длительность: 5ч 32мин</div>
+                <div class="mr-5">Общая длительность: {{totalDuration / 60}} мин</div>
               </div>
             </div>
           </div>
@@ -137,7 +137,7 @@
                 <div class="card-body-icon">
                   <i class="fas fa-fw fa-life-ring"></i>
                 </div>
-                <div class="mr-5">Записей за сегодня: 45</div>
+                <div class="mr-5">Записей за сегодня: {{todayRecordsCount}}</div>
               </div>
             </div>
           </div>
@@ -252,12 +252,20 @@
             },
             recordsCount() {
               return this.$store.getters.getRecordsCount
+            },
+            todayRecordsCount() {
+              return this.$store.getters.getTodayRecordsCount;
+            },
+            totalDuration() {
+              return this.$store.getters.getTotalDuration;
             }
 
         },
         created() {
             this.$store.dispatch('recordList')
             this.$store.dispatch('recordsCount')
+            this.$store.dispatch('todayRecordsCount')
+            this.$store.dispatch('totalDuration')
         },
       methods: {
         find() {
