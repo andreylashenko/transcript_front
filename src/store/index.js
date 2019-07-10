@@ -6,7 +6,10 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     contacts: [],
-    recordings: []
+    recordings: [],
+    recordsCount : 0,
+    todayRecordsCount : 0,
+    totalDuration: 0
   },
   mutations:{
     setRecordings(state, payload) {
@@ -33,7 +36,10 @@ export default new Vuex.Store({
       } else {
         state.contacts = [payload]
       }
-    }
+    },
+    setRecordsCount(state, payload) {
+      state.recordsCount = payload;
+    },
   },
   actions: {
     recordList(context, payload) {
@@ -45,6 +51,16 @@ export default new Vuex.Store({
           .then(recordings => {
             context.commit('setRecordings', recordings)
             return recordings
+          })
+    },
+    recordsCount(context, payload) {
+      Vue.http.get('http://localhost:8081/metric/recordsCount')
+          .then(response => {
+            return response.json()
+          })
+          .then(recordsCount => {
+            context.commit('setRecordsCount', recordsCount)
+            return recordsCount
           })
     },
     savePhone(context, payload) {
@@ -112,6 +128,9 @@ export default new Vuex.Store({
     },
     getRecordList(state) {
       return state.recordings;
+    },
+    getRecordsCount(state) {
+      return state.recordsCount;
     }
   }
 })

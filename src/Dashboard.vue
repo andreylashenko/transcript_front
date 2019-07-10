@@ -147,7 +147,7 @@
                 <div class="card-body-icon">
                   <i class="fas fa-fw fa-life-ring"></i>
                 </div>
-                <div class="mr-5">Всего записей: 301</div>
+                <div class="mr-5">Всего записей: {{recordsCount}}</div>
               </div>
 
             </div>
@@ -242,17 +242,22 @@
       components: {AudioPlayer},
       data () {
         return {
-          words: ''
+          words: '',
+
         }
       },
       computed: {
             recordingList() {
-                console.log(this.$store.getters.getRecordList);
                 return this.$store.getters.getRecordList;
+            },
+            recordsCount() {
+              return this.$store.getters.getRecordsCount
             }
+
         },
         created() {
             this.$store.dispatch('recordList')
+            this.$store.dispatch('recordsCount')
         },
       methods: {
         find() {
