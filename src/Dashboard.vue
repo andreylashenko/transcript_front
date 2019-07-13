@@ -8,6 +8,7 @@
   <title></title>
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css">
+
 </head>
 
 <body id="page-top">
@@ -157,9 +158,39 @@
         <!-- DataTables Example -->
         <div class="card mb-3">
           <div class="card-header">
-             <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
-              <div class="input-group">
-                <input type="text" class="form-control" placeholder="Поиск по диалогам" aria-label="Search" aria-describedby="basic-addon2" v-model="words">
+             <form class="ml-auto mr-0 mr-md-3 my-2 my-md-0">
+               <div class="form-row">
+                 <div class="col-3">
+                   <label>Поиск по диалогу</label>
+                   <input type="text" class="form-control" placeholder="Ключевое слово" v-model="words">
+                 </div>
+                 <div class="col-3">
+                   <label>Поиск по Id лида</label>
+                   <input type="text" class="form-control" placeholder="Id лида" v-model="leadExternalId">
+                 </div>
+                 <div class="col-3">
+                   <label>Дата начала</label>
+                   <datepicker :language="ru" v-model="dateStart" :format='customFormatter'></datepicker>
+                 </div>
+               </div>
+
+               <div class="form-row">
+                 <div class="col-3">
+                   <label>Поиск по Id оператора</label>
+                   <input type="text" class="form-control" placeholder="Id оператора" v-model="operatorId">
+                 </div>
+                 <div class="col-3">
+                   <label>Поиск по телефону лида</label>
+                   <input type="text" class="form-control" placeholder="Телефон лида" v-model="leadPhone">
+                 </div>
+                 <div class="col-3">
+                   <label>Дата окончания</label>
+                   <datepicker :language="ru" v-model="dateEnd" :format='customFormatter'></datepicker>
+                 </div>
+               </div>
+
+
+              <div class="input-group mt-2">
                 <div class="input-group-append">
                   <button class="btn btn-primary btn-success" type="button" @click="find">
                     Найти
@@ -232,18 +263,24 @@
 
         </div>
 </template>
+
 <script>
-
-
-
     import AudioPlayer from "./AudioPlayer";
+    import Datepicker from 'vuejs-datepicker';
+    import {ru} from 'vuejs-datepicker/dist/locale'
+    import moment from 'moment'
     export default {
         name: "Dashboard",
-      components: {AudioPlayer},
+      components: {AudioPlayer,  Datepicker},
       data () {
         return {
+          ru: ru,
           words: '',
-
+          operatorId: '',
+          leadExternalId: '',
+          leadPhone: '',
+          dateStart: '',
+          dateEnd: ''
         }
       },
       computed: {
@@ -262,15 +299,48 @@
 
         },
         created() {
-            this.$store.dispatch('recordList')
+          const filter = {
+            words: '',
+            operatorId: '',
+            leadExternalId: '',
+            leadPhone: '',
+            dateStart: '',
+            dateEnd: ''
+          }
+            this.$store.dispatch('recordList', filter)
             this.$store.dispatch('recordsCount')
             this.$store.dispatch('todayRecordsCount')
             this.$store.dispatch('totalDuration')
         },
       methods: {
+          customFormatter(date) {
+            return moment(date).format("Y-MM-DD");
+          },
         find() {
+
+          if(this.dateStart) {
+            this.startDate = moment(this.dateStart).format("Y-MM-DD");
+          } else {
+            this.startDate = ""
+          }
+
+          if(this.dateEnd) {
+            this.dateEnd = moment(this.dateEnd).format("Y-MM-DD");
+          } else {
+            this.dateEnd = ""
+          }
+
+          const filter = {
+            words: encodeURIComponent(this.words),
+            operatorId: this.operatorId,
+            leadExternalId: this.leadExternalId,
+            leadPhone: this.leadPhone,
+            dateStart: this.startDate,
+            dateEnd: this.dateEnd
+          }
+
           if(this.words) {
-            this.$store.dispatch('findRecord', encodeURIComponent(this.words))
+            this.$store.dispatch('findRecord', filter)
           } else {
             this.$store.dispatch('recordList')
           }
