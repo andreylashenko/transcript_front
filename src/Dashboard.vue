@@ -205,8 +205,8 @@
 
             <AudioPlayer v-for="contact in recordingList"
                          :id="'audio'+contact.id"
-                         :date="contact.date"
-                         :operatorName="contact.name"
+                         :date="customDateFormatter(contact.date)"
+                         :operatorName="contact.operatorName"
                          :clientName="contact.leadName"
                          :record='contact.recording'></AudioPlayer>
 
@@ -316,16 +316,19 @@
           customFormatter(date) {
             return moment(date).format("Y-MM-DD");
           },
+        customDateFormatter(date) {
+          return moment(date).format("Y-MM-DD h:mm:ss");
+        },
         find() {
 
           if(this.dateStart) {
-            this.startDate = moment(this.dateStart).format("Y-MM-DD");
+            this.startDate = moment(this.dateStart).format("Y-MM-DD 00:00:00");
           } else {
             this.startDate = ""
           }
 
           if(this.dateEnd) {
-            this.dateEnd = moment(this.dateEnd).format("Y-MM-DD");
+            this.dateEnd = moment(this.dateEnd).format("Y-MM-DD 23:59:59");
           } else {
             this.dateEnd = ""
           }
@@ -339,11 +342,8 @@
             dateEnd: this.dateEnd
           }
 
-          if(this.words) {
-            this.$store.dispatch('findRecord', filter)
-          } else {
-            this.$store.dispatch('recordList')
-          }
+          this.$store.dispatch('recordList', filter)
+
         }
       }
     }

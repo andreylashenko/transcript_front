@@ -137,14 +137,15 @@ export default new Vuex.Store({
       })
     },
     findRecord(context, payload) {
-      Vue.http.post('http://localhost:8081/leadzvon/list', payload)
-          .then(response => {
-            return response.json()
-          })
-          .then(recordings => {
-            context.commit('setRecordings', recordings)
-            return recordings
-          })
+      Vue.http.post('http://localhost:8081/leadzvon/list',
+          payload
+      ).then(response => {
+        return response.json()
+      })
+      .then(recordings => {
+        context.commit('setRecordings', recordings)
+        return recordings
+      })
     }
   },
   getters: {
